@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Input, Button, Table } from 'antd';
+import { Input, Button, Table, Upload, message } from 'antd';
 import * as XLSX from 'xlsx';
+import { UploadOutlined } from '@ant-design/icons';
+import type { UploadProps } from 'antd';
+
 
 const { TextArea } = Input;
+
+
+
 
 export default function App() {
   const [str, setStr] = useState<string>('');
@@ -17,7 +23,7 @@ export default function App() {
 
   const getName = (str: string, n: number) => {
     let data = [];
-    data.push(str.slice(0, str.indexOf("----"))+"----miss6666");
+    data.push(str.slice(0, str.indexOf("----")) + "----miss6666");
     let newStr = str.slice(str.indexOf("----") + 4, str.length);
     setStr(newStr);
     setArrIphone(arrIphone.concat(data));
@@ -57,12 +63,9 @@ export default function App() {
         let obj = {
           name: '',
           password: '',
-          // key: 0
-
         }
         obj.name = arrIphone[i];
         obj.password = arrPassword[i];
-        // obj.key = i;
         arr.push(obj);
       }
       setList([...arr]);
@@ -87,8 +90,37 @@ export default function App() {
     sub()
   }, [num])
 
+
+  const uploadArmProps = {
+    name: 'file',
+    headers: {
+    },// 请求头
+    showUploadList: true,
+    beforeUpload: (file: Blob) => {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = (result) => {
+        console.log('result=', result)
+
+        if (result.target) {
+          let str = result.target.result;
+          console.log('targetNum=', str)
+          setStr(str + "")
+        }
+
+      }
+      return false;
+    }
+
+  };
+
+
   return (
     <div>
+
+      <Upload {...uploadArmProps}>
+        <Button icon={<UploadOutlined />}>上传TXT文件 后 点击下面确定</Button>
+      </Upload>
       <TextArea style={{ minHeight: "200px" }} onChange={(e) => {
         setStr(e.target.value);
       }} />
